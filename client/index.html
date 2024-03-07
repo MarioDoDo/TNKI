@@ -3,448 +3,504 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>TANKI</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>TNKI</title>
+    <!--Takto se tailwind správně v praxi nepoužívá! Pro naše použití však stačí.-->
+    <script src="lib/tailwind.js"></script>
   </head>
   <body class="bg-slate-800">
     <div id="home" class="grid items-center justify-items-center h-screen">
-      <input placeholder="Jméno" />
-      <input id="room" placeholder="Roomka" />
-      <input id="max_player" placeholder="Max počet hráčů" />
-      <button onclick="join_room()">Připojit</button>
-      <button
-        onclick="create_room()"
-        class="bg-yellow-400 w-32 rounded-2xl text-white h-16"
+      <div class="w-80">
+        <img src="assets/header.png" />
+      </div>
+
+      <div
+        class="bg-slate-900 grid items-center justify-items-center h-[70vh] w-2/3 rounded-2xl"
       >
-        Vytvořit
-      </button>
+        <input id="room_name" placeholder="Místnost" />
+
+        <select id="max_players">
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+        </select>
+
+        <input id="player_name" placeholder="Jméno" />
+
+        <button
+          onclick="join_room()"
+          class="bg-slate-400 w-32 rounded-2xl text-white h-16"
+        >
+          Připojit
+        </button>
+
+        <button
+          onclick="create_room()"
+          class="bg-yellow-400 w-32 rounded-2xl text-white h-16"
+        >
+          Vytvořit
+        </button>
+      </div>
     </div>
 
     <div
-      id="connecting"
+      id="lobby"
       class="grid items-center justify-items-center h-screen hidden text-white"
     >
-      <h1>Místnost:</h1>
       <h1 id="room_view"></h1>
       <h1 id="players_view"></h1>
-      <button id="start" onclick="start_room()">START</button>
-      <button id="cancel" onclick="leave_lobby()">ZRUŠIT</button>
+
+      <button
+        id="start"
+        onclick="start_room()"
+        class="bg-yellow-400 w-32 rounded-2xl text-white h-16"
+      >
+        START
+      </button>
+
+      <button
+        id="cancel"
+        onclick="leave_room()"
+        class="bg-slate-400 w-32 rounded-2xl text-white h-16"
+      >
+        ZRUŠIT
+      </button>
     </div>
 
     <div
       id="game"
       class="w-screen h-screen grid items-center justify-items-center hidden"
     >
-      <span id="p1"></span>
-      <span id="p2"></span>
-      <span id="p3"></span>
-      <span id="p4"></span>
+      <div
+        id="indicator_0"
+        class="grid absolute top-4 left-4 w-64 h-[140px] bg-slate-900 rounded-2xl text-white hidden"
+      >
+        <div class="flex flex-col items-center justify-center">
+          <img
+            src="assets/tank.png"
+            class="w-16"
+            style="
+              filter: drop-shadow(0px 1000px 0 red);
+              transform: translateY(-1000px);
+            "
+          />
+        </div>
+
+        <div
+          class="flex flex-col col-start-2 col-span-2 row-start-1 items-center bg-black rounded-tr-2xl rounded-br-2xl justify-evenly"
+        >
+          <div class="ammo flex gap-2 h-8 w-full justify-center"></div>
+
+          <div class="health flex gap-2 h-8 w-full justify-center"></div>
+        </div>
+
+        <div
+          class="flex bg-black col-span-3 rounded-bl-2xl rounded-br-2xl items-center justify-center"
+        >
+          <span>ahoj</span>
+        </div>
+      </div>
+
+      <div
+        id="indicator_1"
+        class="grid absolute top-4 right-4 w-64 h-[140px] bg-slate-900 rounded-2xl text-white hidden"
+      >
+        <div class="flex flex-col items-center justify-center">
+          <img
+            src="assets/tank.png"
+            class="w-16"
+            style="
+              filter: drop-shadow(0px 1000px 0 green);
+              transform: translateY(-1000px);
+            "
+          />
+        </div>
+
+        <div
+          class="flex flex-col col-start-2 col-span-2 row-start-1 items-center bg-black rounded-tr-2xl rounded-br-2xl justify-evenly"
+        >
+          <div class="ammo flex gap-2 w-24 h-8 w-full justify-center"></div>
+
+          <div class="health flex gap-2 w-24 h-8 w-full justify-center"></div>
+        </div>
+
+        <div
+          class="flex bg-black col-span-3 rounded-bl-2xl rounded-br-2xl items-center justify-center"
+        >
+          <span></span>
+        </div>
+      </div>
+
+      <div
+        id="indicator_2"
+        class="grid absolute bottom-4 left-4 w-64 h-[140px] bg-slate-900 rounded-2xl text-white hidden"
+      >
+        <div class="flex flex-col items-center justify-center">
+          <img
+            src="assets/tank.png"
+            class="w-16"
+            style="
+              filter: drop-shadow(0px 1000px 0 blue);
+              transform: translateY(-1000px);
+            "
+          />
+        </div>
+
+        <div
+          class="flex flex-col col-start-2 col-span-2 row-start-1 items-center bg-black rounded-tr-2xl rounded-br-2xl justify-evenly"
+        >
+          <div class="ammo flex gap-2 w-24 h-8 w-full justify-center">
+            <img src="assets/ammo.png" class="w-8 h-8" />
+            <img src="assets/ammo.png" class="w-8 h-8" />
+            <img src="assets/ammo.png" class="w-8 h-8" />
+          </div>
+
+          <div class="health flex gap-2 w-24 h-8 w-full justify-center"></div>
+        </div>
+
+        <div
+          class="flex bg-black col-span-3 rounded-bl-2xl rounded-br-2xl items-center justify-center"
+        >
+          <span></span>
+        </div>
+      </div>
+
+      <div
+        id="indicator_3"
+        class="grid absolute bottom-4 right-4 w-64 h-[140px] bg-slate-900 rounded-2xl text-white hidden"
+      >
+        <div class="flex flex-col items-center justify-center">
+          <img
+            src="assets/tank.png"
+            class="w-16"
+            style="
+              filter: drop-shadow(0px 1000px 0 yellow);
+              transform: translateY(-1000px);
+            "
+          />
+        </div>
+
+        <div
+          class="flex flex-col col-start-2 col-span-2 row-start-1 items-center bg-black rounded-tr-2xl rounded-br-2xl justify-evenly"
+        >
+          <div class="ammo flex gap-2 w-24 h-8 w-full justify-center"></div>
+
+          <div class="health flex gap-2 w-24 h-8 w-full justify-center"></div>
+        </div>
+
+        <div
+          class="flex bg-black col-span-3 rounded-bl-2xl rounded-br-2xl items-center justify-center"
+        >
+          <span></span>
+        </div>
+      </div>
+
       <canvas
         id="game_view"
         height="600px"
         width="600px"
-        class="border border-yellow-400 rounded-2xl border-[2px]"
+        class="border border-yellow-400 rounded-2xl border-[2px] w-1/2"
       ></canvas>
     </div>
   </body>
 </html>
 
-<script src="socket.io.min.js"></script>
-<script async>
+<script src="lib/socket.io.min.js"></script>
+<script>
   const socket = new io("ws://localhost:3000");
-  let room, player_index, max_player;
 
-  socket.on("connect", () => {
-    console.log("connected");
+  socket.on("error", (err) => {
+    alert(`Chyba: ${err.message}`);
   });
 
-  socket.on("error", (msg) => {
-    alert(`Chyba: ${JSON.parse(msg).message}`);
-  });
+  const screens = ["home", "lobby", "game"];
 
-  const create_room = () => {
-    room = document.getElementById("room").value;
-    let max_player = document.getElementById("max_player").value;
-    socket.emit(
-      "create_room",
-      JSON.stringify({ room: room, max_player: max_player })
-    );
+  const set_screen = (visible_screen) => {
+    screens
+      .filter((hidden_screen) => hidden_screen != visible_screen)
+      .forEach((hidden_screen) => {
+        document.getElementById(hidden_screen).classList.add("hidden");
+      });
+    document.getElementById(visible_screen).classList.remove("hidden");
   };
 
-  const join_room = () => {
-    room = document.getElementById("room").value;
-    socket.emit("join_room", room);
-  };
-
-  const start_room = () => {
-    socket.emit("start_room", room);
-  };
-
-  const leave_lobby = () => {
-    document.getElementById("home").classList.remove("hidden");
-    document.getElementById("game").classList.add("hidden");
-
-    socket.emit("leave_room", JSON.stringify({ id: socket.id }));
-  };
-
-  socket.on("start_room", () => {
-    game(socket.id, room, player_index);
-  });
-
-  socket.on("join_room", (msg) => {
-    let data = JSON.parse(msg);
-    room = data.room;
-    player_index = data.player_index;
-    console.log(data);
-    max_player = data.max_player;
-
-    document.getElementById("home").classList.add("hidden");
-    document.getElementById("connecting").classList.remove("hidden");
-
-    document.getElementById("room_view").innerText = data.room;
-    document.getElementById("players_view").innerText = `${
-      data.player_index + 1
-    }/${max_player}`;
-  });
-
-  socket.on("new_player", (msg) => {
-    let data = JSON.parse(msg);
-    document.getElementById(
-      "players_view"
-    ).innerText = `${data.player_count}/${max_player}`;
-  });
-
-  const colors = ["red", "green", "blue", "yellow"];
-  const start_positions = [
-    { x: 0, y: 0 },
-    { x: 11, y: 0 },
-    { x: 0, y: 11 },
-    { x: 11, y: 11 },
-  ];
-
-  const game_view = document.getElementById("game_view");
-  const ctx = game_view.getContext("2d");
+  const scene = document.getElementById("game_view").getContext("2d");
 
   const bg = new Image();
-  bg.src = "grass.png";
+  bg.src = "assets/grass.png";
 
   const tank_texture = new Image();
-  tank_texture.src = "tank.png";
+  tank_texture.src = "assets/tank.png";
 
   const baricade_texture = new Image(50, 50);
-  baricade_texture.src = "baricade.png";
+  baricade_texture.src = "assets/baricade.png";
 
   const shot_texture = new Image(50, 50);
-  shot_texture.src = "shot.png";
+  shot_texture.src = "assets/shot.png";
 
-  const map = [
-    [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
-    [0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0],
-    [0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [1, 1, 1, 0, 0, 0, 0, 1, 0, 1, 1, 1],
-    [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
-    [1, 1, 1, 0, 1, 0, 0, 0, 0, 1, 1, 1],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0],
-    [0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0],
-    [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
-  ];
+  let game;
+  class Game {
+    tank_directions = new Map([
+      [0, 0],
+      [1, -Math.PI / 2],
+      [2, Math.PI],
+      [3, Math.PI / 2],
+    ]);
 
-  const game = (id, room, player_index) => {
-    document.getElementById("connecting").classList.add("hidden");
-    document.getElementById("game").classList.remove("hidden");
+    constructor(room_name, tanks, map) {
+      this.room_name = room_name;
+      this.tanks = tanks;
+      this.map = map;
+      this.shots_queue = [];
+    }
 
-    let tanks = {};
+    update_scene() {
+      this.draw_bg();
+      this.draw_map();
 
-    tanks[id] = {
-      ...start_positions[player_index],
-      color: colors[player_index],
-      dir: 0,
-      lives: 3,
-      ammo: 3,
-    };
-
-    let refill_ammo = setInterval(() => {
-      if (tanks[id].ammo < 3) {
-        tanks[id].ammo++;
-      }
-      send_update();
-    }, 3000);
-
-    socket.on("leave_room", (msg) => {
-      document.getElementById("home").classList.remove("hidden");
-      document.getElementById("game").classList.add("hidden");
-
-      delete tanks[JSON.parse(msg).id];
-      update_view();
-      if (Object.keys(tanks).length == 1 && tanks[id]) {
-        alert("Vyhrál jsi!");
-        game_over();
-      }
-    });
-
-    socket.on("update", (msg) => {
-      let data = JSON.parse(msg);
-
-      if (!data.tank) {
-        return;
-      }
-
-      tanks[data.id] = data.tank;
-
-      update_view();
-    });
-
-    let shots = [];
-    setInterval(() => {
-      shots.shift();
-      update_view();
-    }, 200);
-
-    const update_view = () => {
-      clear_ctx();
-
-      draw_bg();
-      Object.keys(tanks).forEach((id) => {
-        draw_tank(tanks[id]);
-      });
-      draw_map();
-
-      shots.forEach((shot) => {
-        console.log(shot.start_x, shot.start_y, shot.end_x, shot.end_y);
-        just_draw_shot(
-          shot.start_x,
-          shot.start_y,
-          shot.end_x,
-          shot.end_y,
-          shot.tank_state
-        );
-      });
-    };
-
-    socket.on("shot", (msg) => {
-      let data = JSON.parse(msg);
-
-      let hits = Object.keys(tanks).filter(
-        (shot_id) =>
-          tanks[shot_id].x >= data.start_x &&
-          tanks[shot_id].x <= data.end_x &&
-          tanks[shot_id].y >= data.start_y &&
-          tanks[shot_id].y <= data.end_y &&
-          shot_id != data.from_id
-      );
-
-      hits.forEach((shot_id) => {
-        tanks[shot_id].lives--;
-        ctx.drawImage(
-          shot_texture,
-          tanks[shot_id].x * 50,
-          tanks[shot_id].y * 50,
-          50,
-          50
-        );
+      this.tanks.forEach((tank) => {
+        this.draw_tank(tank);
       });
 
-      tanks[id].ammo--;
-      send_update();
+      this.shots_queue.forEach((shot) => {
+        this.draw_shot(shot);
+      });
+    }
 
-      shots.push(data);
+    draw_bg() {
+      scene.drawImage(bg, 0, 0, 600, 600);
+    }
 
-      if (tanks[id].lives == 0) {
-        game_over();
-        alert("Prohrál jsi!");
-      }
-    });
-
-    const game_over = () => {
-      clearInterval(refill_ammo);
-      socket.emit("leave_room", JSON.stringify({ id: id }));
-    };
-
-    const send_update = () => {
-      socket.emit("update", JSON.stringify({ id: id, tank: tanks[id] }));
-    };
-    send_update();
-
-    const rotate = (tank, dir_koef) => {
-      ctx.translate(tank.x * 50 + 2.5 + 22.5, tank.y * 50 + 2.5 + 22.5);
-      ctx.rotate(dir_koef * tank.dir);
-      ctx.translate(-(tank.x * 50 + 2.5 + 22.5), -(tank.y * 50 + 2.5 + 22.5));
-    };
-
-    const draw_tank = (tank) => {
-      rotate(tank, 1);
-      ctx.drawImage(tank_texture, tank.x * 50 + 2.5, tank.y * 50 + 2.5, 45, 45);
-      rotate(tank, -1);
-
-      ctx.beginPath();
-      ctx.fillStyle = tank.color;
-      ctx.arc(tank.x * 50 + 25, tank.y * 50 + 25, 5, 0, 2 * Math.PI);
-      ctx.fill();
-    };
-
-    const draw_bg = () => {
-      ctx.drawImage(bg, 0, 0, 600, 600);
-    };
-
-    const draw_baricade = (x, y, width, height) => {
-      ctx.drawImage(baricade_texture, x, y, width, height);
-    };
-
-    const shoot = (start_x, start_y, end_x, end_y) => {
-      console.log(tanks);
-      console.log("naboje v shoot: ", tanks[id].ammo);
-      if (tanks[id].ammo < 1) {
-        return;
-      }
-
-      socket.emit(
-        "shot",
-        JSON.stringify({
-          from_id: id,
-          start_x: start_x,
-          start_y: start_y,
-          end_x: end_x,
-          end_y: end_y,
-          tank_state: tanks[id],
-        })
-      );
-    };
-
-    const just_draw_shot = (start_x, start_y, end_x, end_y, tank_state) => {
-      ctx.fillStyle = "orange";
-
-      if (end_y - start_y == 0) {
-        //tank je horizontálně
-        ctx.fillRect(
-          start_x < tank_state.x ? start_x * 50 : start_x * 50 + 45,
-          start_y * 50 + 22.5,
-          (end_x - start_x) * 50,
-          5
-        );
-      } else {
-        //tank je vertikálně
-        ctx.fillRect(
-          tank_state.x * 50 + 22.5,
-          start_y < tank_state.y ? start_y * 50 : start_y * 50 + 45,
-          5,
-          (end_y - start_y) * 50
-        );
-      }
-    };
-
-    const draw_shot = (tank) => {
-      let first_baricade;
-      let column;
-      ctx.fillStyle = "orange";
-      switch (tank.dir) {
-        case 0:
-          column = map.reduce((a, b) => a.concat(b[tank.x]), []);
-
-          first_baricade = column.findLastIndex((_, i) => {
-            return i < tank.y && column[i] == 1;
-          });
-
-          shoot(tank.x, first_baricade + 1, tank.x, tank.y);
-
-          break;
-        case Math.PI:
-          column = map.reduce((a, b) => a.concat(b[tank.x]), []);
-
-          first_baricade = column.findIndex((_, i) => {
-            return i > tank.y && column[i] == 1;
-          });
-          first_baricade = first_baricade == -1 ? 12 : first_baricade;
-
-          shoot(tank.x, tank.y, tank.x, first_baricade - 1);
-          break;
-        case Math.PI / 2:
-          first_baricade = map[tank.y].findIndex((_, i) => {
-            return i > tank.x && map[tank.y][i] == 1;
-          });
-          first_baricade = first_baricade == -1 ? 12 : first_baricade;
-
-          shoot(tank.x, tank.y, first_baricade - 1, tank.y);
-          break;
-        case -Math.PI / 2:
-          first_baricade = map[tank.y].findLastIndex((_, i) => {
-            return i < tank.x && map[tank.y][i] == 1;
-          });
-
-          shoot(first_baricade + 1, tank.y, tank.x, tank.y);
-          break;
-      }
-    };
-
-    const draw_map = () => {
-      map.forEach((row, i) => {
-        row.forEach((block, k) => {
-          if (block == 1) {
-            draw_baricade(k * 50, i * 50, 50, 50);
+    draw_map() {
+      this.map.forEach((row, i) => {
+        row.forEach((baricade, j) => {
+          if (baricade) {
+            scene.drawImage(baricade_texture, j * 50, i * 50, 50, 50);
           }
         });
       });
-    };
-    draw_map();
+    }
 
-    const clear_ctx = () => {
-      ctx.clearRect(0, 0, game_view.width, game_view.height);
-      ctx.beginPath();
-    };
+    rotate_scene(tank, reverse) {
+      scene.translate(tank.x * 50 + 2.5 + 22.5, tank.y * 50 + 2.5 + 22.5);
+      scene.rotate((reverse ? -1 : 1) * this.tank_directions.get(tank.dir));
+      scene.translate(-(tank.x * 50 + 2.5 + 22.5), -(tank.y * 50 + 2.5 + 22.5));
+    }
 
-    document.onkeydown = (e) => {
-      switch (e.code) {
-        case "ArrowLeft":
-          tanks[id].dir = -Math.PI / 2;
-          if (e.shiftKey) {
-            break;
-          }
+    draw_tank(tank) {
+      this.rotate_scene(tank, false);
 
-          if (tanks[id].x > 0 && map[tanks[id].y][tanks[id].x - 1] === 0) {
-            tanks[id].x--;
-          }
-          break;
-        case "ArrowRight":
-          tanks[id].dir = Math.PI / 2;
-          if (e.shiftKey) {
-            break;
-          }
+      scene.drawImage(
+        tank_texture,
+        tank.x * 50 + 2.5,
+        tank.y * 50 + 2.5,
+        45,
+        45
+      );
 
-          if (tanks[id].x < 11 && map[tanks[id].y][tanks[id].x + 1] === 0) {
-            tanks[id].x++;
-          }
+      scene.beginPath();
+      scene.fillStyle = tank.color;
+      scene.arc(tank.x * 50 + 25, tank.y * 50 + 25, 5, 0, 2 * Math.PI);
+      scene.fill();
 
-          break;
-        case "ArrowUp":
-          e.preventDefault();
-          tanks[id].dir = 0;
-          if (e.shiftKey) {
-            break;
-          }
-          if (tanks[id].y > 0 && map[tanks[id].y - 1][tanks[id].x] === 0) {
-            tanks[id].y--;
-          }
-          break;
-        case "ArrowDown":
-          e.preventDefault();
-          tanks[id].dir = Math.PI;
-          if (e.shiftKey) {
-            break;
-          }
-          if (tanks[id].y < 11 && map[tanks[id].y + 1][tanks[id].x] === 0) {
-            tanks[id].y++;
-          }
+      this.rotate_scene(tank, true);
+    }
 
-          break;
-        case "Space":
-          e.preventDefault();
-          draw_shot(tanks[id]);
-          break;
+    draw_shot(shot) {
+      scene.fillStyle = "orange";
+
+      const path = shot.path;
+      if (path.horizontal) {
+        scene.fillRect(
+          path.dir_to_scene_start ? path.start_x * 50 : path.start_x * 50 + 45,
+          path.start_y * 50 + 22.5,
+          (path.end_x - path.start_x) * 50,
+          5
+        );
+      } else {
+        scene.fillRect(
+          path.start_x * 50 + 22.5,
+          path.dir_to_scene_start ? path.start_y * 50 : path.start_y * 50 + 45,
+          5,
+          (path.end_y - path.start_y) * 50
+        );
       }
 
-      send_update();
-    };
+      shot.hits.forEach((hit) => {
+        scene.drawImage(shot_texture, hit.x * 50, hit.y * 50, 50, 50);
+      });
+    }
+  }
+
+  const create_room = () => {
+    const room_name = document.getElementById("room_name").value;
+    const max_players = document.getElementById("max_players").value;
+    const player_name = document.getElementById("player_name").value;
+
+    if (!room_name || !max_players || !player_name) {
+      alert("Vyplňte všechna pole!");
+      return;
+    }
+
+    socket.emit("create_room", {
+      room_name: room_name,
+      max_players: max_players,
+      player_name: player_name,
+    });
+  };
+
+  const join_room = () => {
+    const room_name = document.getElementById("room_name").value;
+    const player_name = document.getElementById("player_name").value;
+
+    if (!room_name || !player_name) {
+      alert("Vyplňte jméno místnosti a jméno hráče!");
+      return;
+    }
+
+    socket.emit("join_room", {
+      room_name: room_name,
+      player_name: player_name,
+    });
+  };
+
+  socket.on("room_joined", (msg) => {
+    set_screen("lobby");
+
+    document.getElementById("room_view").innerText = `
+    Místnost: ${msg.room_name}
+    `;
+
+    document.getElementById("players_view").innerText = `
+    Hráči: ${msg.player_index + 1} / ${msg.max_players}
+    `;
+  });
+
+  socket.on("update_players", (msg) => {
+    document.getElementById(
+      "players_view"
+    ).innerText = `Hráči: ${msg.player_count} / ${msg.max_players}`;
+  });
+
+  const leave_room = () => {
+    set_screen("home");
+
+    socket.emit("leave_room");
+  };
+
+  const start_room = () => {
+    socket.emit("start_room");
+  };
+
+  const set_indicator = (index, value, type) => {
+    const indicator = document.querySelector(`#indicator_${index} .${type}`);
+    indicator.innerHTML = "";
+    for (let i = 0; i < value; i++) {
+      indicator.innerHTML += `<img src="assets/${type}.png" class="w-8 h-8" />`;
+    }
+  };
+
+  socket.on("room_started", (msg) => {
+    set_screen("game");
+
+    game = new Game(msg.room_name, new Map(msg.tanks), msg.map);
+
+    game.update_scene();
+
+    game.tanks.forEach((tank) => {
+      document
+        .querySelector(`#indicator_${tank.index}`)
+        .classList.remove("hidden");
+      document.querySelector(`#indicator_${tank.index} span`).innerText =
+        tank.player_name;
+
+      set_indicator(tank.index, 3, "ammo");
+      set_indicator(tank.index, 3, "health");
+    });
+  });
+
+  socket.on("player_left", (msg) => {
+    document
+      .getElementById(`indicator_${game.tanks.get(msg.player_id).index}`)
+      .classList.add("hidden");
+
+    game.tanks.delete(msg.player_id);
+
+    game.update_scene();
+  });
+
+  socket.on("move_updated", (msg) => {
+    const tank = game.tanks.get(msg.id);
+
+    msg.update.forEach((update) => {
+      tank[update.property] = update.value;
+    });
+
+    game.update_scene();
+  });
+
+  socket.on("shoot_updated", (msg) => {
+    game.shots_queue.push(msg);
+
+    setTimeout(() => {
+      game.shots_queue.shift();
+      game.update_scene();
+    }, 200);
+
+    msg.hits.forEach((hit) => {
+      if (game.tanks.has(hit.id)) {
+        const tank = game.tanks.get(hit.id);
+        tank.lives = hit.lives;
+        set_indicator(tank.index, hit.lives, "health");
+      }
+    });
+
+    game.update_scene();
+  });
+
+  socket.on("ammo_updated", (msg) => {
+    if (msg.refill) {
+      game.tanks.forEach((tank) => {
+        if (tank.ammo < 3) {
+          tank.ammo++;
+        }
+        set_indicator(tank.index, tank.ammo, "ammo");
+      });
+    } else {
+      const tank = game.tanks.get(msg.tank_id);
+      tank.ammo = msg.ammo;
+      set_indicator(tank.index, tank.ammo, "ammo");
+    }
+  });
+
+  const reset_screen = () => {
+    set_screen("home");
+
+    for (let i = 0; i <= 3; i++) {
+      document.getElementById(`indicator_${i}`).classList.add("hidden");
+    }
+  };
+
+  socket.on("lost", () => {
+    reset_screen();
+    alert("Prohrál jsi!");
+  });
+
+  socket.on("win", () => {
+    reset_screen();
+    alert("Vyhrál jsi!");
+  });
+
+  const move_keys = ["ArrowUp", "ArrowLeft", "ArrowDown", "ArrowRight"];
+  document.onkeydown = (e) => {
+    if (move_keys.includes(e.code)) {
+      e.preventDefault();
+      socket.emit("update_move", { key: e.code, shift: e.shiftKey });
+      return;
+    }
+
+    if (e.code == "Space") {
+      e.preventDefault();
+      socket.emit("update_shoot");
+    }
   };
 </script>

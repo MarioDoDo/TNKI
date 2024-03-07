@@ -4,7 +4,7 @@
   "description": "",
   "main": "main.js",
   "type": "module",
-  "author": "",
+  "author": "Mário Daniel Doskočil",
   "license": "ISC",
   "dependencies": {
     "socket.io": "^4.7.4"
